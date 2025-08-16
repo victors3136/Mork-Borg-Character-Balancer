@@ -13,6 +13,8 @@ const anyLeft = (characters) => characters.length > 0;
 
 const halfDefeated = (characters, startingCount) => characters.length <= Math.floor(startingCount / 2);
 
+const playerIsAboutToDie = (player, enemy) => player.current_hp < enemy.damage_die;
+
 const dead = character => character.current_hp <= 0;
 
 const badlyInjured = character => character.current_hp <= character.hp / 3;
@@ -70,16 +72,28 @@ const enemyTurn = (enemy, player) => {
     const fumble = isFumble(rollValue);
 
     if (fumble || totalRoll < targetRoll) {
+        if (player.shield && playerIsAboutToDie(player, enemy)) {
+            // shield breaks to block the attack last minute
+            player.shield = false;
+            return;
+        }
+
         let damageRoll = roll(enemy.damage_die);
-        if(fumble) {
+        if (fumble) {
             damageRoll *= 2;
             player.armor.dropOneLevel();
         }
         damageRoll -= roll(player.armor.reduction_die);
+
+        if (player.shield) {
+            damageRoll -= roll(2);
+        }
+
         const damage = Math.max(damageRoll, 0);
         player.current_hp -= damage;
     }
 }
+
 export const simulateBattle = async (playerData, enemyData) => {
     const MAX_ROUNDS = 25;
     let players = playerData.map((data) => Player.from(data));
