@@ -3,6 +3,7 @@ import {Weapon} from "./Weapon.js";
 
 export class Player {
     constructor(props) {
+        this.id = props?.id ?? null;
         this.name = props?.name ?? "Anonymous";
         this.hp = props?.hp ?? 1;
         this.current_hp = this.hp;
@@ -17,6 +18,7 @@ export class Player {
 
     static from(playerData) {
         return new Player({
+            id: playerData.id,
             name: playerData.name,
             hp: playerData.hp,
             strength: playerData.strength,
