@@ -1,6 +1,7 @@
 import {StatCard} from "./StatCard.jsx";
 import React from "react";
-export const SimulationResults = ({ results }) => {
+
+export const SimulationResults = ({results}) => {
     if (!results) return null;
 
     return (
@@ -18,26 +19,26 @@ export const SimulationResults = ({ results }) => {
                     icon="📊"
                 />
                 <StatCard
-                    label="Win Rate"
-                    value={`${results.winRate}%`}
+                    label="Total Win Rate"
+                    value={`${results.totalWinRate}%`}
                     color="text-green-400"
                     bgColor="bg-green-900/20"
                     icon="🏆"
                     highlight={true}
                 />
                 <StatCard
+                    label="Partial Win Rate"
+                    value={`${results.partialWinRate}%`}
+                    color="text-green-400"
+                    bgColor="bg-green-900/20"
+                    icon="🚩"
+                />
+                <StatCard
                     label="Loss Rate"
-                    value={`${(100 - results.winRate - results.timeoutRate).toFixed(1)}%`}
+                    value={`${(100 - results.partialWinRate - results.totalWinRate - results.timeoutRate).toFixed(1)}%`}
                     color="text-red-400"
                     bgColor="bg-red-900/20"
                     icon="💀"
-                />
-                <StatCard
-                    label="Timeout Rate"
-                    value={`${results.timeoutRate}%`}
-                    color="text-amber-400"
-                    bgColor="bg-amber-900/20"
-                    icon="⏱️"
                 />
                 <StatCard
                     label="Avg. Rounds"

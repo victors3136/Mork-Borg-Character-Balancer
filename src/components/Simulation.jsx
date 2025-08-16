@@ -8,7 +8,8 @@ import {Armor} from "../model/Armor.js";
 import {Player} from "../model/Player.js";
 
 const runSimulations = async (numSims, players, enemyData) => {
-    let wins = 0;
+    let partialWins = 0;
+    let totalWins = 0;
     let timeouts = 0;
     let totalRounds = [];
     const simPromises = Array.from({length: numSims}, () => simulateBattle(players, enemyData));
@@ -16,14 +17,17 @@ const runSimulations = async (numSims, players, enemyData) => {
 
     for (let result of results) {
         if(results.timeout) timeouts ++;
-        else if (result.win) wins++;
+        else if(result.totalWin) totalWins ++;
+        else if (result.partialWin) partialWins++;
+
         totalRounds.push(result.rounds);
     }
 
     return {
         simulations: numSims,
         timeoutRate: ((timeouts / numSims) * 100).toFixed(1),
-        winRate: ((wins / numSims) * 100).toFixed(1),
+        partialWinRate: ((partialWins / numSims) * 100).toFixed(1),
+        totalWinRate: ((totalWins / numSims) * 100).toFixed(1),
         avgRounds: ([...totalRounds].reduce((a, b) => a + b, 0) / totalRounds.length).toFixed(0),
     };
 };

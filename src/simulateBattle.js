@@ -97,6 +97,7 @@ const enemyTurn = (enemy, player) => {
 export const simulateBattle = async (playerData, enemyData) => {
     const MAX_ROUNDS = 25;
     let players = playerData.map((data) => Player.from(data));
+    const startingPlayerCount = players.length;
     let enemies = Array.from({length: enemyData.count},
         () => new Enemy(enemyData.props));
     const startingEnemyCount = enemies.length;
@@ -134,7 +135,8 @@ export const simulateBattle = async (playerData, enemyData) => {
     const wasWin = !wasTimeout && players.length > 0;
     return {
         timeout: wasTimeout,
-        win: wasWin,
+        partialWin: wasWin,
+        totalWin: players.length === startingPlayerCount,
         rounds
     };
 }
