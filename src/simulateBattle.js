@@ -50,10 +50,11 @@ const playerTurn = (player, enemy) => {
         return;
     }
     const crit = isCrit(rollValue);
-    if (totalRoll >= targetRoll || crit) {
-        const preliminaryDamage = (crit ? 2 : 1) * roll(player.weapon.damage_die)
-            - roll(enemy.armor.reduction_die);
-        const damage = Math.max(preliminaryDamage, 0);
+    if (crit || totalRoll >= targetRoll) {
+        let damageRoll = roll(player.weapon.damage_die);
+        if (crit) damageRoll *= 2;
+        damageRoll -= roll(enemy.armor.reduction_die);
+        const damage = Math.max(damageRoll, 0);
         enemy.current_hp -= damage;
     }
 }
@@ -67,14 +68,16 @@ const enemyTurn = (enemy, player) => {
         return;
     }
     const fumble = isFumble(rollValue);
-    if (totalRoll >= targetRoll || fumble) {
-        const preliminaryDamage = (fumble ? 2 : 1) * roll(enemy.damage_die)
-            - roll(player.armor.reduction_die);
-        const damage = Math.max(preliminaryDamage, 0);
+
+    if (fumble || totalRoll < targetRoll) {
+        let damageRoll = roll(enemy.damage_die);
+        if(fumble) {
+            damageRoll *= 2;
+            player.armor.dropOneLevel();
+        }
+        damageRoll -= roll(player.armor.reduction_die);
+        const damage = Math.max(damageRoll, 0);
         player.current_hp -= damage;
-    }
-    if (fumble) {
-        player.armor.dropOneLevel();
     }
 }
 export const simulateBattle = async (playerData, enemyData) => {
